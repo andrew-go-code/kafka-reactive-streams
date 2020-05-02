@@ -1,0 +1,7 @@
+server:
+  port: 8812
+
+kafka:
+  server: http://localhost:9092
+  group:
+    id: gr_1

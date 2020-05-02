@@ -1,0 +1,7 @@
+
+server:
+  port: 8833
+
+quotation:
+  server: http://localhost:8811
+  uri: quotation

@@ -1,0 +1,44 @@
+package demo.kafka.producer.config
+
+import demo.kafka.producer.dto.QuotationDto
+import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.common.serialization.LongSerializer
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.kafka.core.DefaultKafkaProducerFactory
+import org.springframework.kafka.core.KafkaTemplate
+import org.springframework.kafka.core.ProducerFactory
+import org.springframework.kafka.support.converter.StringJsonMessageConverter
+import org.springframework.kafka.support.serializer.JsonSerializer
+
+@Configuration
+class KafkaProducerConfig {
+    @Value("\${kafka.server}")
+    private lateinit var kafkaServer: String
+
+    @Value("\${kafka.producer.id}")
+    private lateinit var kafkaProducerId: String
+
+    @Bean
+    fun producerConfig(): Map<String, Any>{
+        return mapOf(
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to kafkaServer,
+                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to LongSerializer::class.java.name,
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to JsonSerializer::class.java.name,
+                ProducerConfig.CLIENT_ID_CONFIG to kafkaProducerId
+        )
+    }
+
+    @Bean
+    fun quotationTemplate(): KafkaTemplate<Long, QuotationDto> {
+        val kafkaTemplate = KafkaTemplate(quotationFactory())
+        kafkaTemplate.setMessageConverter(StringJsonMessageConverter())
+        return kafkaTemplate
+    }
+
+    @Bean
+    fun quotationFactory(): ProducerFactory<Long, QuotationDto>{
+        return DefaultKafkaProducerFactory(producerConfig())
+    }
+}

@@ -1,0 +1,8 @@
+
+server:
+  port: 8822
+
+kafka:
+  server: http://localhost:9092
+  producer:
+    id: forex-producer
